@@ -12,9 +12,9 @@ print ("Wow that's amazing! Do you enjoy being a "+occupation+"?"+" Please choos
 
 answer=input()
 
-if answer=="Yes" or "yes":
+if answer=="Yes":
     print("Awesome, I hope you get a raise soon!")
-elif answer=="No" or "no":
+elif answer=="No":
     print ("That's okay, doing what we don't like can be a way to build discipline!")
 else:
     print("You didn't choose Yes or No! Please run the program again")
