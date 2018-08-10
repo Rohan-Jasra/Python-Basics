@@ -45,24 +45,42 @@ for index in enumerate(infoArr):
     assetArr.append(infoArr[infoArrIterator][5])
     assetArr.append(infoArr[infoArrIterator][6])
 
-#prorating the shares - infoArr vs assetArr
+assetArrLength = len(assetArr)
 
+#prorating the shares - tradeData vs infoArr
 sharesIterator = -1
+transferShares = []
+totalShares = []
+proratedFactor = []
 
-for index in enumerate(infoArr):
-    sharesIterator = sharesIterator+1
-    if infoArrIterator==infoArrLength:
+for index, share in enumerate(tradeData):
+    if index == listLength:
         break
-    assetArr[sharesIterator][3] = infoArr[sharesIterator][]
+    transferShares.append(tradeData[index][2])
 
-print(extractData)
-print('---------------')
+for index, share in enumerate(infoArr):
+    if index == infoArrLength:
+        break
+    totalShares.append(infoArr[index][6])
+
+for index, share in enumerate(totalShares):
+    if index == infoArrLength:
+        break
+    proratedFactor[index] = totalShares[index] / transferShares[index]   
+
 print(tradeData)
-print('---------------')
-print(assetArr)
-print('---------------')
+print('----------------')
+print(extractData)
+print('----------------')
 print(infoArr)
-    
+print('----------------')
+print(assetArr)
+print('----------------')
+print(transferShares)
+print('----------------')
+print(totalShares)
+print('----------------')
+
 
 """for index in enumerate(tradeData):
     indexN=indexN+1
