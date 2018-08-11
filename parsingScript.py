@@ -20,33 +20,48 @@ extractLength=len(extractData)
 infoArr = []
 
 #parsing the extract data and pushing it to the list
-for index in enumerate(tradeData):
-    indexN=indexN+1
-    if indexN==extractLength:
+for (index, elem) in enumerate(tradeData):
+    if index==listLength:
         break
-    if(tradeData[indexN][0] == extractData[indexN][0] and tradeData[indexN][1] == extractData[indexN][1]):
-       infoArr.append(extractData[indexN])
+    for (idx, val) in enumerate(extractData):
+        if(val[0] == elem[1] and (val[13] == elem[2] or val[15] == elem[2])):
+            infoArr.append(val)
 
 #setting lengths on the parsed list
 infoArrLength = len(infoArr)
-infoArrIterator = -1
+
 
 #initalizing the list which will hold the data neccessary for the transfer file
 assetArr = []
 
 #parsing the extract data
-for index in enumerate(infoArr):
-    infoArrIterator = infoArrIterator+1
-    if infoArrIterator==infoArrLength:
+for (index, elem) in enumerate(infoArr):
+    
+    if index==infoArrLength:
         break
-    assetArr.append(infoArr[infoArrIterator][0])
-    assetArr.append(infoArr[infoArrIterator][1])
-    assetArr.append(infoArr[infoArrIterator][4])
-    assetArr.append(infoArr[infoArrIterator][5])
-    assetArr.append(infoArr[infoArrIterator][6])
+    assetArr.append(tradeData[index][0]) #Date
+    assetArr.append(infoArr[index][0])   #Fund code
+    assetArr.append(infoArr[index][2])   #Security
+    assetArr.append(infoArr[index][8])   #Shares
+    assetArr.append(infoArr[index][9])   #Base Cost 
+    assetArr.append(infoArr[index][22])   #Native Cost
 
+#Slicing the infoArr into seperate elements
+finalArr = []
 assetArrLength = len(assetArr)
+numOfTransfers = int(assetArrLength / 6) #this will give us the number of securities that are being transferred
+numOfLoops = numOfTransfers * 6
+arrCounterStart = 0
+arrCounterEnd = 6
 
+for i in range(0, numOfTransfers):
+    finalArr.append(assetArr[arrCounterStart:arrCounterEnd])
+    arrCounterStart = arrCounterStart + 6
+    arrCounterEnd = arrCounterEnd + 6
+
+print(finalArr)
+
+"""
 #prorating the shares - tradeData vs infoArr
 sharesIterator = -1
 transferShares = []
@@ -68,9 +83,16 @@ for index, share in enumerate(totalShares):
         break
     proratedFactor[index] = totalShares[index] / transferShares[index]   
 
-print(tradeData)
+"""
+
+print(infoArr)
 print('----------------')
-print(extractData)
+print(assetArr)
+print('----------------')
+print(finalArr)
+"""
+print('----------------')
+print(tradeData)
 print('----------------')
 print(infoArr)
 print('----------------')
@@ -80,7 +102,7 @@ print(transferShares)
 print('----------------')
 print(totalShares)
 print('----------------')
-
+"""
 
 """for index in enumerate(tradeData):
     indexN=indexN+1
@@ -89,12 +111,9 @@ print('----------------')
     for key,value in dict1.items():
         if (tradeData[indexN][1])==key:
             tradeData[indexN][1]=value
-
 print(tradeData)
             
-
 with open("Converted.csv","a", newline='') as File:
     finish= csv.writer(File)
     finish.writerows(tradeData)
-File.close()"""    
-    
+File.close()"""  
