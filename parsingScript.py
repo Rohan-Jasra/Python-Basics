@@ -132,15 +132,27 @@ for (index, elem) in enumerate(endTup):
 transferInFinal = []
 transferInLength = len(transferIn)
 numOfTransfersIn = int(transferInLength / 7) 
-numOfLoopsIn = numOfTransfers * 7
+numOfLoopsIn = numOfTransfersIn * 7
 arrCounterStartIn = 0
 arrCounterEndIn = 7
 
 for i in range(0, numOfTransfersIn):
-    transferInFinal.append(transferIn[arrCounterStart:arrCounterEnd])
+    transferInFinal.append(transferIn[arrCounterStartIn:arrCounterEndIn])
     arrCounterStartIn = arrCounterStartIn + 7
     arrCounterEndIn = arrCounterEndIn + 7
 
+    
+transferOutFinal = []
+transferOutLength = len(transferOut)
+numOfTransfersOut = int(transferOutLength / 5) 
+numOfLoopsOut = numOfTransfersOut * 5
+arrCounterStartOut = 0
+arrCounterEndOut = 5
+
+for i in range(0, numOfTransfersIn):
+    transferOutFinal.append(transferOut[arrCounterStartOut:arrCounterEndOut])
+    arrCounterStartOut = arrCounterStartOut + 5
+    arrCounterEndOut = arrCounterEndOut + 5
 
 print(finalArr)
 print('----------------')
@@ -148,8 +160,13 @@ print(transferIn)
 print('----------------')
 print(transferInFinal)
 
-"""            
+           
 with open("transfer_in.csv","a", newline='') as File:
     finish= csv.writer(File)
-    finish.writerows(transferIn)
-File.close() """
+    finish.writerows(transferInFinal)
+File.close()
+
+with open("transfer_out.csv","a", newline='') as File:
+    finishOut= csv.writer(File)
+    finishOut.writerows(transferOutFinal)
+File.close()
