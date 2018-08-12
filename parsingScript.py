@@ -1,4 +1,5 @@
 import csv
+from copy import deepcopy
 
 
 #opening the raw data made by user
@@ -46,6 +47,8 @@ for (index, elem) in enumerate(infoArr):
     assetArr.append(infoArr[index][9])   #Base Cost 
     assetArr.append(infoArr[index][22])   #Native Cost
 
+
+
 #Slicing the infoArr into seperate elements
 finalArr = []
 assetArrLength = len(assetArr)
@@ -59,61 +62,94 @@ for i in range(0, numOfTransfers):
     arrCounterStart = arrCounterStart + 6
     arrCounterEnd = arrCounterEnd + 6
 
+#Creating a copy of finalArr by value
+endTup = deepcopy(tuple(finalArr))
+
+#Finding the prorated factor per ID
+transferShares = {}
+totalShares = {}
+proratedShares = {}
+
+for (index, elem) in enumerate(tradeData): 
+    elem[2] = finalArr[index][2] #this converts client ID to app ID for mapping
+
+for (index, elem) in enumerate(tradeData):
+    transferShares[elem[2]] = elem[3]
+
+for (index, elem) in enumerate(infoArr):
+    totalShares[elem[2]] = elem[8]
+
+for (keyTotal, valueTotal), (keyApp, valueApp) in zip(totalShares.items(), transferShares.items()):
+    if keyTotal == keyApp:
+        proratedShares[keyTotal] = float(valueTotal) / float(valueApp)
+
+
+#Multiplying the base/native cost by prorated factor
+for (keyPro, valuePro), elem in zip(proratedShares.items(), finalArr):
+    if(keyPro == elem[2]):
+        elem[4] = str(float(elem[4]) * float(valuePro))
+        elem[5] = str(float(elem[5]) * float(valuePro))
+
+#Converting the shares to positive if it is negative
+for (index, elem) in enumerate(finalArr):
+    if( float(elem[3]) * -1 == abs(float(elem[3]))):
+        elem[3] = str(float(elem[3]) * -1) + "00"
+
+#Setting up the data to be written
+transferOut = []
+transferIn = []
+
+for (index, elem) in enumerate(endTup):
+    if(float(elem[3]) * -1 == abs(float(elem[3]))):  #short position
+        transferIn.append(tradeData[index][0]) #Date
+        transferIn.append(elem[1]) #Fund Code
+        transferIn.append(elem[2]) #Security
+        transferIn.append(elem[2]) #Security
+        transferIn.append(finalArr[index][3]) #Shares
+        transferIn.append(finalArr[index][4]) #Base Cost
+        transferIn.append(finalArr[index][5]) #Native Cost
+        transferOut.append(elem[0]) #Date                  
+        transferOut.append(tradeData[index][4]) #Fund Code
+        transferOut.append(elem[2]) #Security
+        transferOut.append(finalArr[index][3]) #Shares
+        transferOut.append(finalArr[index][4]) #Base Cost
+
+    else: #long position
+        transferOut.append(tradeData[index][0]) #Date
+        transferOut.append(elem[1]) #Fund Code
+        transferOut.append(elem[2]) #Security
+        transferOut.append(finalArr[index][3]) #Shares
+        transferOut.append(finalArr[index][4]) #Base Cost
+        transferIn.append(tradeData[index][0]) #Date
+        transferIn.append(tradeData[index][4]) #Fund Code
+        transferIn.append(elem[2]) #Security
+        transferIn.append(elem[2]) #Security
+        transferIn.append(finalArr[index][3]) #Shares
+        transferIn.append(finalArr[index][4]) #Base Cost
+        transferIn.append(finalArr[index][5]) #Native Cost
+
+#Slicing the in/out into seperate elements
+transferInFinal = []
+transferInLength = len(transferIn)
+numOfTransfersIn = int(transferInLength / 7) 
+numOfLoopsIn = numOfTransfers * 7
+arrCounterStartIn = 0
+arrCounterEndIn = 7
+
+for i in range(0, numOfTransfersIn):
+    transferInFinal.append(transferIn[arrCounterStart:arrCounterEnd])
+    arrCounterStartIn = arrCounterStartIn + 7
+    arrCounterEndIn = arrCounterEndIn + 7
+
+
 print(finalArr)
+print('----------------')
+print(transferIn)
+print('----------------')
+print(transferInFinal)
 
-"""
-#prorating the shares - tradeData vs infoArr
-sharesIterator = -1
-transferShares = []
-totalShares = []
-proratedFactor = []
-
-for index, share in enumerate(tradeData):
-    if index == listLength:
-        break
-    transferShares.append(tradeData[index][2])
-
-for index, share in enumerate(infoArr):
-    if index == infoArrLength:
-        break
-    totalShares.append(infoArr[index][6])
-
-for index, share in enumerate(totalShares):
-    if index == infoArrLength:
-        break
-    proratedFactor[index] = totalShares[index] / transferShares[index]   
-
-"""
-
-print(infoArr)
-print('----------------')
-print(assetArr)
-print('----------------')
-print(finalArr)
-"""
-print('----------------')
-print(tradeData)
-print('----------------')
-print(infoArr)
-print('----------------')
-print(assetArr)
-print('----------------')
-print(transferShares)
-print('----------------')
-print(totalShares)
-print('----------------')
-"""
-
-"""for index in enumerate(tradeData):
-    indexN=indexN+1
-    if indexN==listLength:
-        break
-    for key,value in dict1.items():
-        if (tradeData[indexN][1])==key:
-            tradeData[indexN][1]=value
-print(tradeData)
-            
-with open("Converted.csv","a", newline='') as File:
+"""            
+with open("transfer_in.csv","a", newline='') as File:
     finish= csv.writer(File)
-    finish.writerows(tradeData)
-File.close()"""  
+    finish.writerows(transferIn)
+File.close() """
