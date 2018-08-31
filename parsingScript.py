@@ -170,3 +170,21 @@ with open("transfer_out.csv","a", newline='') as File:
     finishOut= csv.writer(File)
     finishOut.writerows(transferOutFinal)
 File.close()
+
+#checking for 1 decimal place and adding a zero
+randomArr = [['4.523'], ['2.0']]
+decimals = []
+
+for (index, elem) in enumerate(randomArr):
+    decimals.append(elem[0].split('.')[1])
+    
+
+
+for (index,elem) in enumerate(decimals):
+    if (len(elem) == 1):        
+        randomArr[index][0] = randomArr[index][0] + '0'
+        
+        
+print(decimals)
+print(randomArr)
+
