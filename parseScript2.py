@@ -61,7 +61,14 @@ for index, elem in enumerate(decimalsUSD):
 #removing the '-' in both native and USD
 
 for index, elem in enumerate(decimalsNative):
-    elem = elem.replace('-', ' ')
+    if elem[0] == '-':
+        print(elem)
+        decimalsNative[index] = elem.replace('-', '')
+
+for index, elem in enumerate(decimalsUSD):
+    if elem[0] == '-':
+        print(elem)
+        decimalsUSD[index] = elem.replace('-', '')
 
 
 #The program requires fund code/trade date/settle date/buy currency/sell currency/rate/Buy amount/Sell amount/Reference
