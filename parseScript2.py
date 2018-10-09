@@ -59,17 +59,22 @@ for index, elem in enumerate(decimalsUSD):
         decimalsUSD[index] = decimalsUSD[index] + '.00'
 
 #removing the '-' in both native and USD
-
 for index, elem in enumerate(decimalsNative):
     if elem[0] == '-':
-        print(elem)
         decimalsNative[index] = elem.replace('-', '')
 
 for index, elem in enumerate(decimalsUSD):
     if elem[0] == '-':
-        print(elem)
         decimalsUSD[index] = elem.replace('-', '')
 
+#removing the '.' in both native and USD
+for index, elem in enumerate(decimalsNative):
+    if elem.find('.') != -1:
+        decimalsNative[index] = elem.replace('.', '')
+       
+for index, elem in enumerate(decimalsUSD):
+    if elem.find('.') != -1:
+        decimalsUSD[index] = elem.replace('.', '')
 
 #The program requires fund code/trade date/settle date/buy currency/sell currency/rate/Buy amount/Sell amount/Reference
 
@@ -106,9 +111,6 @@ for elem in ctDataArr:
         buyCur.append(elem[1])
 
 
-test = 'hello'
-print(test.find('k'))
-
 print('---------------')
 print(ctDataArr)
 print('---------------')
@@ -122,10 +124,6 @@ print(decimalsNative)
 print('---------------')
 print(decimalsUSD)
 print('---------------')
-
-
-
-
 
     
 
