@@ -1,4 +1,9 @@
 import csv
+import random
+
+#This program makes a few assumptions
+# 1) all transfers must have a USD side
+# 2) the first transfer will dictate the date used for ALL transfers
 
 activityFile=open('USB.csv')
 activityReader=csv.reader(activityFile)
@@ -40,7 +45,9 @@ for i in range(0, numOfTransfers):
     arrCounterStart = arrCounterStart + dataLen
     arrCounterEnd = arrCounterEnd + dataLen
 
-#making sure the two net amounts have two decimals
+#The program requires fund code/trade date/settle date/buy currency/sell currency/rate/Buy amount/Sell amount/Reference
+
+#Setting up the net amounts in USD and foreign currency
 decimalsNative = []
 decimalsUSD = []
 
@@ -49,7 +56,9 @@ for elem in ctDataArr:
 for elem in activityData:
     if elem[8].startswith('AUTOFX:') and elem[1] == 'USD':
         decimalsUSD.append(elem[15])
-        
+
+
+#making sure the two net amounts have two decimals        
 for index, elem in enumerate(decimalsNative):
     if elem.find('.') == -1:
         decimalsNative[index] = decimalsNative[index] + '.00'
@@ -59,24 +68,35 @@ for index, elem in enumerate(decimalsUSD):
         decimalsUSD[index] = decimalsUSD[index] + '.00'
 
 #removing the '-' in both native and USD
-for index, elem in enumerate(decimalsNative):
-    if elem[0] == '-':
-        decimalsNative[index] = elem.replace('-', '')
+def removeChar(arr, char):
+    for index, elem in enumerate(arr):
+        if elem.find(char) != -1:
+            arr[index] = elem.replace(char,'')
+    return arr
 
-for index, elem in enumerate(decimalsUSD):
-    if elem[0] == '-':
-        decimalsUSD[index] = elem.replace('-', '')
+removeChar(decimalsNative, '-')      
+removeChar(decimalsUSD, '-')
 
 #removing the '.' in both native and USD
-for index, elem in enumerate(decimalsNative):
-    if elem.find('.') != -1:
-        decimalsNative[index] = elem.replace('.', '')
-       
-for index, elem in enumerate(decimalsUSD):
-    if elem.find('.') != -1:
-        decimalsUSD[index] = elem.replace('.', '')
+removeChar(decimalsNative, '.')      
+removeChar(decimalsUSD, '.')
 
-#The program requires fund code/trade date/settle date/buy currency/sell currency/rate/Buy amount/Sell amount/Reference
+#normalizing the net amounts to the appropriate amount of characters
+amountCount = '000000000000000'
+finalAmountUSD = []
+finalAmountNative = []
+
+def amountGenerator(arr, string, newArr):
+    for index, elem in enumerate(arr):
+        length = len(elem)
+        newAmount = ''
+        newAmount = string[0:(15-length)] + elem
+        newArr.append(newAmount)
+    return newArr
+
+amountGenerator(decimalsUSD, amountCount, finalAmountUSD)   
+amountGenerator(decimalsNative, amountCount, finalAmountNative)
+    
 
 #Making the fund code array
 fundCode = []
@@ -110,6 +130,39 @@ for elem in ctDataArr:
         sellCur.append('USD')
         buyCur.append(elem[1])
 
+#reference
+refNum = []
+for elem in ctDataArr:
+    refNum.append(elem[4])
+    
+finalRefNum = []
+
+def refGen(arr, length, newArr):
+    for index, elem in enumerate(arr):
+        elemLen = len(elem)
+        diff = length - elemLen
+        
+        if elemLen == length:
+            print('shouldnt print')
+            continue
+        
+        elif elemLen > length:
+            print('shouldnt print')
+            newElem = elem[0:length]
+            newArr.append(newElem)
+            
+        elif elemLen < length:
+            elemChar = ''
+            for i in range (diff):
+                rand =  str(random.randint(1,10))
+                elemChar = elemChar+rand
+            finalElemChar = elem + elemChar
+            newArr.append(finalElemChar)
+    return newArr
+
+refGen(refNum, 15, finalRefNum)               
+            
+
 
 print('---------------')
 print(ctDataArr)
@@ -124,6 +177,10 @@ print(decimalsNative)
 print('---------------')
 print(decimalsUSD)
 print('---------------')
-
-    
-
+print(finalAmountUSD)
+print('---------------')
+print(finalAmountNative)
+print('---------------')
+print(refNum)
+print('---------------')
+print(finalRefNum)  
