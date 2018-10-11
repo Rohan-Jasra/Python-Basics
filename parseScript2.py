@@ -10,7 +10,7 @@ activityReader=csv.reader(activityFile)
 activityData=list(activityReader)
 
 #Reference dictionary
-refDict = {'CC&L All Strategies Fund' : 'CCSU', 'CC&L Multi-Strategy Fund' : 'CMUQ', 'CC&L Q 140 40 Fund' : 'Q140U', 'CC&L Q Equity Extension Fund' : 'CCQU', 'CC&L Q Market Neutral Fund II' : 'CQMU', 'CC&L Q US Equity Extension Fd' : 'CUBS', 'CC&L US Q Mkt Neut On Fd II' : 'CUQU', 'CCL Q Equity Extension Fund II' : 'CQUB', 'Q Market Neutral Fund': 'CQOU'}
+refDict = {'CC&L All Strategies Fund' : 'CCSU', 'CC&L Multi-Strategy Fund' : 'CMUQ', 'CC&L Q 140 40 Fund' : 'Q140U', 'CC&L Q Equity Extension Fund' : 'CCQU', 'CC&L Q Market Neutral Fund II' : 'CCUB', 'CC&L Q US Equity Extension Fd' : 'CUBS', 'CC&L US Q Mkt Neut On Fd II' : 'CUQU', 'CCL Q Equity Extension Fund II' : 'CQUB', 'Q Market Neutral Fund': 'CQOU'}
 
 ctData = []
 
@@ -110,6 +110,7 @@ for elem in ctDataArr:
 dateDict = {'Jan' : '1', 'Feb': '2', 'Mar': '3', 'Apr': '4', 'May': '5', 'Jun': '6', 'Jul': '7', 'Aug': '8', 'Sep': '9', 'Oct': '10', 'Nov': '11', 'Dec': '12'}
 ctDate = ctDataArr[0][2]
 ctDateYear = '2018'
+ctDateYearShort = '18'
 ctDateDay = ctDate[0:2]
 ctDateMon = ctDate[3:6]
 ctDateMonNum = ''
@@ -129,6 +130,19 @@ for elem in ctDataArr:
     else:
         sellCur.append('USD')
         buyCur.append(elem[1])
+
+#setting up the array with normalized buy/sell amounts
+#We will use finalAmountUSD and finalAmountNative
+buyAmountActual = []
+sellAmountActual = []
+
+for index, elem in enumerate(buyCur):
+    if elem == 'USD':
+        buyAmountActual.append(finalAmountUSD[index])
+        sellAmountActual.append(finalAmountNative[index])
+    else:
+        buyAmountActual.append(finalAmountNative[index])
+        sellAmountActual.append(finalAmountUSD[index])
 
 #reference
 refNum = []
@@ -160,27 +174,83 @@ def refGen(arr, length, newArr):
             newArr.append(finalElemChar)
     return newArr
 
-refGen(refNum, 15, finalRefNum)               
-            
+refGen(refNum, 13, finalRefNum)
 
+#adding spaces at the end of fund code to equal char length
+fundCodeFinal = []
 
-print('---------------')
-print(ctDataArr)
-print('---------------')
-print(fundCode)
-print('---------------')
-print(buyCur)
-print('---------------')
-print(sellCur)
-print('---------------')
-print(decimalsNative)
-print('---------------')
-print(decimalsUSD)
-print('---------------')
-print(finalAmountUSD)
-print('---------------')
-print(finalAmountNative)
-print('---------------')
-print(refNum)
-print('---------------')
-print(finalRefNum)  
+fundCodeWidth = 9
+for index, elem in enumerate(fundCode):
+    length = len(elem)
+    newElem = elem.ljust(fundCodeWidth, ' ')
+    fundCodeFinal.append(newElem)
+
+#setting the rate
+curRate = '00000000000'
+
+#setting the required field
+tType = 'SPT'
+
+#setting up the final array and apending the values
+finalArr = []
+
+for index, elem in enumerate(fundCodeFinal):
+    finalArr.append(tType+
+                    elem+
+                    ctDateDay+
+                    ctDateMonNum+
+                    ctDateYearShort+
+                    ctDateDay+
+                    ctDateMonNum+
+                    ctDateYear+
+                    buyCur[index]+
+                    sellCur[index]+
+                    curRate+
+                    buyAmountActual[index]+
+                    sellAmountActual[index]+
+                    finalRefNum[index])
+
+finalArrList = []
+for i in finalArr:
+    spl = i.split(',')
+    finalArrList.append(spl)   
+
+#print('---------------')
+#print(ctDataArr)
+#print('---------------')
+#print(fundCode)
+#print('---------------')
+#print(buyCur)
+#print('---------------')
+#print(sellCur)
+#print('---------------')
+#print(decimalsNative)
+#print('---------------')
+#print(decimalsUSD)
+#print('---------------')
+#print(finalAmountUSD)
+#print('---------------')
+#print(finalAmountNative)
+#print('---------------')
+#print(refNum)
+#print('---------------')
+#print(finalRefNum)  
+#print('---------------')
+#print(fundCodeFinal)
+#print('---------------')
+#print(ctDateMonNum)
+#print('---------------')
+#print(buyAmountActual)
+#print('---------------')
+#print(sellAmountActual)
+#print('---------------')
+#print(finalArrList)
+#print('---------------')
+#print(finalArr)
+
+with open("gplus.csv","a", newline='') as File:
+    finish= csv.writer(File)
+    finish.writerows(finalArrList)
+File.close()
+
+ 
