@@ -77,6 +77,16 @@ def removeChar(arr, char):
 removeChar(decimalsNative, '-')      
 removeChar(decimalsUSD, '-')
 
+#add a zero if only one decimal place
+def addDec(arr):
+    for index, elem in enumerate(arr):
+        checkArr = elem.split('.')
+        if len(checkArr[1]) == 1:
+            arr[index] = elem+'0'
+                       
+addDec(decimalsNative)
+addDec(decimalsUSD)
+
 #removing the '.' in both native and USD
 removeChar(decimalsNative, '.')      
 removeChar(decimalsUSD, '.')
@@ -168,7 +178,7 @@ def refGen(arr, length, newArr):
         elif elemLen < length:
             elemChar = ''
             for i in range (diff):
-                rand =  str(random.randint(1,10))
+                rand =  str(random.randint(1,9))
                 elemChar = elemChar+rand
             finalElemChar = elem + elemChar
             newArr.append(finalElemChar)
@@ -193,6 +203,7 @@ tType = 'SPT'
 
 #setting up the final array and apending the values
 finalArr = []
+finalArr.append('HEADER    '+ctDateDay+ctDateMonNum+ctDateYear)
 
 for index, elem in enumerate(fundCodeFinal):
     finalArr.append(tType+
@@ -210,47 +221,31 @@ for index, elem in enumerate(fundCodeFinal):
                     sellAmountActual[index]+
                     finalRefNum[index])
 
+#Setting the trailer
+recordLen = str(len(fundCodeFinal))
+recordLenLen = len(recordLen)
+recordNum = '0000000'
+newRecordNum = recordNum.replace('0', '',recordLenLen)
+newRecordNum = newRecordNum + recordLen
+finalArr.append('TRAILER    '+newRecordNum)
+
 finalArrList = []
 for i in finalArr:
     spl = i.split(',')
     finalArrList.append(spl)   
 
 #print('---------------')
-#print(ctDataArr)
-#print('---------------')
-#print(fundCode)
-#print('---------------')
-#print(buyCur)
-#print('---------------')
-#print(sellCur)
-#print('---------------')
-#print(decimalsNative)
-#print('---------------')
-#print(decimalsUSD)
-#print('---------------')
-#print(finalAmountUSD)
-#print('---------------')
-#print(finalAmountNative)
-#print('---------------')
-#print(refNum)
-#print('---------------')
-#print(finalRefNum)  
-#print('---------------')
-#print(fundCodeFinal)
-#print('---------------')
-#print(ctDateMonNum)
-#print('---------------')
 #print(buyAmountActual)
 #print('---------------')
 #print(sellAmountActual)
 #print('---------------')
-#print(finalArrList)
+#print(finalRefNum)
 #print('---------------')
-#print(finalArr)
+
+
 
 with open("gplus.csv","a", newline='') as File:
     finish= csv.writer(File)
     finish.writerows(finalArrList)
 File.close()
-
  
