@@ -244,7 +244,7 @@ for i in finalArr:
 
 
 
-with open("gplus.csv","a", newline='') as File:
+with open("gplus_currtrf.csv","a", newline='') as File:
     finish= csv.writer(File)
     finish.writerows(finalArrList)
 File.close()
