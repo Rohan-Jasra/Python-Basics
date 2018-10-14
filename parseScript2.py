@@ -29,6 +29,7 @@ for elem in activityData:
 #ctData.append(elem[11]) - Reference
 #ctData.append(elem[15]) - Native net amount
 
+#Parsing the USD amounts from the native data
 
 #Slicing the activityDate into seperate elements
 arrLen = len(ctData)
