@@ -129,6 +129,8 @@ ctDateMonNum = ''
 for key,value in dateDict.items():
     if key == ctDateMon:
         ctDateMonNum = value
+        
+#Setting dates for each transfer
        
 #Buy/Sell currency
 buyCur = []
