@@ -29,7 +29,6 @@ for elem in activityData:
 #ctData.append(elem[11]) - Reference
 #ctData.append(elem[15]) - Native net amount
 
-#Parsing the USD amounts from the native data
 
 #Slicing the activityDate into seperate elements
 arrLen = len(ctData)
@@ -57,6 +56,12 @@ for elem in ctDataArr:
 for elem in activityData:
     if elem[8].startswith('AUTOFX:') and elem[1] == 'USD':
         decimalsUSD.append(elem[15])
+        
+decimalsUSDTrue = []
+
+for elem in ctDataArr:
+    descArr = elem[3].split(' ')
+    decimalsUSDTrue.append(descArr[2])
 
 
 #making sure the two net amounts have two decimals        
@@ -68,6 +73,10 @@ for index, elem in enumerate(decimalsUSD):
     if elem.find('.') == -1:
         decimalsUSD[index] = decimalsUSD[index] + '.00'
 
+for index, elem in enumerate(decimalsUSDTrue):
+    if elem.find('.') == -1:
+        decimalsUSDTrue[index] = decimalsUSDTrue[index] + '.00'
+
 #removing the '-' in both native and USD
 def removeChar(arr, char):
     for index, elem in enumerate(arr):
@@ -77,6 +86,9 @@ def removeChar(arr, char):
 
 removeChar(decimalsNative, '-')      
 removeChar(decimalsUSD, '-')
+removeChar(decimalsUSDTrue, '-')
+removeChar(decimalsUSDTrue, ',')
+
 
 #add a zero if only one decimal place
 def addDec(arr):
@@ -87,14 +99,17 @@ def addDec(arr):
                        
 addDec(decimalsNative)
 addDec(decimalsUSD)
+addDec(decimalsUSDTrue)
 
 #removing the '.' in both native and USD
 removeChar(decimalsNative, '.')      
 removeChar(decimalsUSD, '.')
+removeChar(decimalsUSDTrue, '.')
 
 #normalizing the net amounts to the appropriate amount of characters
 amountCount = '000000000000000'
 finalAmountUSD = []
+finalAmountUSDTrue = []
 finalAmountNative = []
 
 def amountGenerator(arr, string, newArr):
@@ -107,7 +122,8 @@ def amountGenerator(arr, string, newArr):
 
 amountGenerator(decimalsUSD, amountCount, finalAmountUSD)   
 amountGenerator(decimalsNative, amountCount, finalAmountNative)
-    
+amountGenerator(decimalsUSDTrue, amountCount, finalAmountUSDTrue) 
+
 
 #Making the fund code array
 fundCode = []
@@ -129,8 +145,6 @@ ctDateMonNum = ''
 for key,value in dateDict.items():
     if key == ctDateMon:
         ctDateMonNum = value
-        
-#Setting dates for each transfer
        
 #Buy/Sell currency
 buyCur = []
@@ -151,11 +165,11 @@ sellAmountActual = []
 
 for index, elem in enumerate(buyCur):
     if elem == 'USD':
-        buyAmountActual.append(finalAmountUSD[index])
+        buyAmountActual.append(finalAmountUSDTrue[index])
         sellAmountActual.append(finalAmountNative[index])
     else:
         buyAmountActual.append(finalAmountNative[index])
-        sellAmountActual.append(finalAmountUSD[index])
+        sellAmountActual.append(finalAmountUSDTrue[index])
 
 #reference
 refNum = []
@@ -170,11 +184,9 @@ def refGen(arr, length, newArr):
         diff = length - elemLen
         
         if elemLen == length:
-            print('shouldnt print')
             continue
         
         elif elemLen > length:
-            print('shouldnt print')
             newElem = elem[0:length]
             newArr.append(newElem)
             
